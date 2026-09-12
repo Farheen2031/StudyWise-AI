@@ -154,3 +154,71 @@ def delete_material(material_id):
 
     conn.commit()
     conn.close()
+
+def init_quiz_table():
+    """
+    Creates the quiz_results table if it does not already exist.
+    """
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS quiz_results (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            material_id INTEGER,
+            subject TEXT,
+            score INTEGER,
+            total INTEGER,
+            percentage REAL,
+            taken_date TEXT
+        )
+    """)
+
+    conn.commit()
+    conn.close()
+
+
+def save_quiz_result(material_id, subject, score, total, percentage):
+    """
+    Saves one completed quiz result to the database.
+    """
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT INTO quiz_results
+        (material_id, subject, score, total, percentage, taken_date)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (
+        material_id,
+        subject,
+        score,
+        total,
+        percentage,
+        datetime.now().strftime("%Y-%m-%d %H:%M")
+    ))
+
+    conn.commit()
+    conn.close()
+
+
+def get_quiz_history():
+    """
+    Returns all saved quiz results, newest first.
+    """
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM quiz_results
+        ORDER BY id DESC
+    """)
+
+    rows = cursor.fetchall()
+
+    conn.close()
+
+    return [dict(row) for row in rows]
