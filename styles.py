@@ -23,6 +23,14 @@ CUSTOM_CSS = """
     margin-top: 0;
     color: #333;
 }
+.stApp h1,
+.stApp h2,
+.stApp h3,
+.stApp h4,
+.stApp p,
+.stApp label {
+    color: #222222;
+}
 .metric-card {
     background: linear-gradient(135deg, #6C63FF, #8B7FFF);
     color: white;
