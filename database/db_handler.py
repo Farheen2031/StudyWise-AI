@@ -38,6 +38,7 @@ def init_db():
 
     conn.commit()
     conn.close()
+    init_quiz_table()
 
 
 def add_material(subject, filename, extracted_text, page_count=0):
@@ -155,10 +156,12 @@ def delete_material(material_id):
     conn.commit()
     conn.close()
 
+
 def init_quiz_table():
     """
     Creates the quiz_results table if it does not already exist.
     """
+
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
@@ -180,8 +183,9 @@ def init_quiz_table():
 
 def save_quiz_result(material_id, subject, score, total, percentage):
     """
-    Saves one completed quiz result to the database.
+    Saves one quiz attempt's result.
     """
+
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
@@ -204,18 +208,17 @@ def save_quiz_result(material_id, subject, score, total, percentage):
 
 def get_quiz_history():
     """
-    Returns all saved quiz results, newest first.
+    Returns all past quiz results, most recent first.
     """
+
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
 
     cursor = conn.cursor()
 
-    cursor.execute("""
-        SELECT *
-        FROM quiz_results
-        ORDER BY id DESC
-    """)
+    cursor.execute(
+        "SELECT * FROM quiz_results ORDER BY id DESC"
+    )
 
     rows = cursor.fetchall()
 
